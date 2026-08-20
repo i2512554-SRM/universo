@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Un Pequeño Universo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/universe.css">
+    <link rel="stylesheet" href="css/ui.css">
+</head>
+<body>
+
+    <div id="loading-screen">
+        <div class="loading-text" id="loading-text"></div>
+        <div class="loading-bar-track">
+            <div class="loading-bar-fill" id="loading-bar"></div>
+        </div>
+    </div>
+
+    <canvas id="universe-canvas"></canvas>
+    <canvas id="saturn-canvas"></canvas>
+
+    <div id="toast"></div>
+    <div id="surprise-overlay"></div>
+    <div id="final-screen"></div>
+
+    <div id="music-player">
+        <button id="btn-play" aria-label="Play/Pause">&#9654;</button>
+        <div class="music-bars">
+            <span></span><span></span><span></span>
+        </div>
+        <span class="music-info" id="music-name"></span>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/saturn.js"></script>
+    <script src="js/universe.js"></script>
+    <script src="js/interactions.js"></script>
+    <script src="js/audio.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+:root {
+    --negro-profundo: #030108;
+    --azul-noche: #0a0a2e;
+    --violeta-oscuro: #1a0a3e;
+    --purpura-medio: #2d1b69;
+    --cian-tenue: #4fc3f7;
+    --cyan-glow: #00e5ff;
+    --blanco-suave: #e8e8f0;
+    --blanco-dim: rgba(232, 232, 240, 0.6);
+    --estrella-blanca: #ffffff;
+    --estrella-azul: #a8d8ff;
+    --estrella-violeta: #c8a8ff;
+    --estrella-cian: #80deea;
+    --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    --transition-fast: 0.2s ease;
+    --transition-medium: 0.4s ease;
+    --transition-slow: 0.8s ease;
+}
