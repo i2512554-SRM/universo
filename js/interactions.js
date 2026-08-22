@@ -1,23 +1,18 @@
 /**
  * Interacciones — doble click para descubrir secretos
- * Saturno es la experiencia. Los textos son los secretos.
+ * El agujero negro es la experiencia. Los textos son los secretos.
  */
 
 const Interactions = {
 
-    init(universe, saturn) {
+    init(universe, hole) {
         this.universe = universe;
-        this.saturn = saturn;
+        this.hole = hole;
 
         this.toastEl = document.getElementById("toast");
         this.toastTimer = null;
         this.cooldownMs = 1800;
         this.cooldownTimer = 0;
-
-        this.surpriseEl = document.getElementById("surprise-overlay");
-        this.finalEl = document.getElementById("final-screen");
-
-        this.surpriseShown = false;
 
         this.lastClickTime = 0;
         this.lastClickX = 0;
@@ -30,8 +25,12 @@ const Interactions = {
 
     setupListeners() {
         const handler = (x, y) => {
-            if (this.surpriseEl.classList.contains("visible")) return;
-            if (this.finalEl.classList.contains("visible")) return;
+            if (this.hole && this.hole.proposalActive) return;
+
+            if (this.hole && this.hole.checkHeartClick(x, y)) {
+                this.hole.onHeartClick();
+                return;
+            }
 
             const now = Date.now();
             const dt = now - this.lastClickTime;
@@ -48,14 +47,14 @@ const Interactions = {
         };
 
         document.addEventListener("click", (e) => {
-            if (e.target.closest("#music-player")) return;
+            if (e.target.closest("#music-toggle") || e.target.closest("#player-panel")) return;
             handler(e.clientX, e.clientY);
         });
 
         let lastTouchTime = 0, lastTouchX = 0, lastTouchY = 0;
 
         document.addEventListener("touchend", (e) => {
-            if (e.target.closest("#music-player")) return;
+            if (e.target.closest("#music-toggle") || e.target.closest("#player-panel")) return;
             if (e.changedTouches.length !== 1) return;
             const t = e.changedTouches[0];
             const now = Date.now();
@@ -82,8 +81,8 @@ const Interactions = {
             return;
         }
 
-        if (this.saturn && this.saturn.checkClick(x, y)) {
-            this.onSaturnDoubleClick();
+        if (this.hole && this.hole.checkClick(x, y)) {
+            this.onHoleDoubleClick();
             return;
         }
     },
@@ -94,16 +93,15 @@ const Interactions = {
         if (!star.discovered) {
             star.discovered = true;
             this.universe.discoveredStars++;
-            this.checkSurprise();
         }
 
         this.showToast(Utils.pick(CONFIG.mensajesDescubribles));
     },
 
-    onSaturnDoubleClick() {
+    onHoleDoubleClick() {
         this.cooldownTimer = Date.now() + this.cooldownMs;
-        if (this.saturn) this.saturn.triggerExplosion();
-        this.showToast(Utils.pick(CONFIG.mensajesSaturno));
+        if (this.hole) this.hole.triggerAbsorption();
+        this.showToast(Utils.pick(CONFIG.mensajesDescubribles));
     },
 
     showToast(message) {
@@ -120,71 +118,81 @@ const Interactions = {
         }, 3000);
     },
 
-    checkSurprise() {
-        if (this.surpriseShown) return;
-        if (this.universe.discoveredStars >= CONFIG.universo.objetosDesbloqueablesNecesarios) {
-            this.surpriseShown = true;
-            setTimeout(() => this.showSurprise(), 2000);
+    /* ===== PROPUESTA (triple click en corazon) ===== */
+
+    showProposal() {
+        if (document.getElementById("proposal-overlay")) return;
+
+        const overlay = document.createElement("div");
+        overlay.id = "proposal-overlay";
+        overlay.className = "proposal-overlay";
+
+        const card = document.createElement("div");
+        card.className = "proposal-card";
+
+        const q = document.createElement("div");
+        q.className = "proposal-question";
+        q.textContent = "¿Quieres ser mi novia?";
+        card.appendChild(q);
+
+        const btnRow = document.createElement("div");
+        btnRow.className = "proposal-buttons";
+
+        const btnYes = document.createElement("button");
+        btnYes.className = "proposal-btn proposal-btn-yes";
+        btnYes.textContent = "Si";
+        btnYes.addEventListener("click", () => this.onProposalYes());
+
+        const btnNo = document.createElement("button");
+        btnNo.className = "proposal-btn proposal-btn-no";
+        btnNo.textContent = "No";
+        btnNo.addEventListener("click", () => this.onProposalNo());
+
+        btnRow.appendChild(btnYes);
+        btnRow.appendChild(btnNo);
+        card.appendChild(btnRow);
+        overlay.appendChild(card);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => overlay.classList.add("visible"));
+    },
+
+    onProposalYes() {
+        const overlay = document.getElementById("proposal-overlay");
+        if (overlay) overlay.remove();
+
+        if (this.hole) {
+            this.hole.triggerMassiveExplosion();
+            setTimeout(() => {
+                this.universe.frozen = true;
+                FloatingWords.frozen = true;
+                this.hole.triggerTextFormation("TE AMO", () => {
+                    this.hole.proposalActive = false;
+                    this.hole.heartReady = false;
+                    this.universe.frozen = false;
+                    FloatingWords.frozen = false;
+                });
+            }, 1300);
         }
     },
 
-    showSurprise() {
-        const el = this.surpriseEl;
-        el.innerHTML = "";
+    onProposalNo() {
+        const overlay = document.getElementById("proposal-overlay");
+        if (overlay) overlay.remove();
 
-        const title = document.createElement("div");
-        title.className = "surprise-line";
-        title.textContent = CONFIG.sorpresa.titulo;
-        el.appendChild(title);
+        this.universe.frozen = true;
+        FloatingWords.frozen = true;
 
-        for (const msg of CONFIG.sorpresa.mensajes) {
-            const line = document.createElement("div");
-            line.className = "surprise-line";
-            line.textContent = msg;
-            el.appendChild(line);
+        if (this.hole) {
+            this.hole.triggerMassiveExplosion();
+            setTimeout(() => {
+                this.hole.triggerTextFormation("SE INTENTO", () => {
+                    this.hole.proposalActive = false;
+                    this.hole.heartReady = false;
+                    this.universe.frozen = false;
+                    FloatingWords.frozen = false;
+                });
+            }, 1500);
         }
-
-        const btn = document.createElement("button");
-        btn.className = "card-close";
-        btn.style.marginTop = "20px";
-        btn.textContent = "volver al universo";
-        btn.addEventListener("click", () => el.classList.remove("visible"));
-        el.appendChild(btn);
-
-        el.classList.add("visible");
-        el.querySelectorAll(".surprise-line").forEach((l, i) => {
-            setTimeout(() => l.classList.add("visible"), 400 + i * 600);
-        });
-
-        setTimeout(() => this.showFinal(), 400 + el.querySelectorAll(".surprise-line").length * 600 + 2000);
-    },
-
-    showFinal() {
-        this.surpriseEl.classList.remove("visible");
-        const el = this.finalEl;
-        el.innerHTML = "";
-
-        for (const msg of CONFIG.final.mensajes) {
-            const line = document.createElement("div");
-            line.className = "final-line";
-            line.textContent = msg;
-            el.appendChild(line);
-        }
-
-        const btn = document.createElement("button");
-        btn.id = "btn-back";
-        btn.textContent = CONFIG.final.botonVolver;
-        btn.addEventListener("click", () => {
-            el.classList.remove("visible");
-            this.surpriseShown = false;
-            this.universe.discoveredStars = 0;
-        });
-        el.appendChild(btn);
-
-        el.classList.add("visible");
-        el.querySelectorAll(".final-line").forEach((l, i) => {
-            setTimeout(() => l.classList.add("visible"), 300 + i * 700);
-        });
-        setTimeout(() => btn.classList.add("visible"), 300 + el.querySelectorAll(".final-line").length * 700 + 400);
     }
 };

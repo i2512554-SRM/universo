@@ -24,28 +24,74 @@
     </div>
 
     <canvas id="universe-canvas"></canvas>
-    <canvas id="saturn-canvas"></canvas>
+    <canvas id="hole-canvas"></canvas>
 
     <div id="toast"></div>
-    <div id="surprise-overlay"></div>
-    <div id="final-screen"></div>
+    <div id="floating-words"></div>
 
-    <div id="music-player">
-        <button id="btn-play" aria-label="Play/Pause">&#9654;</button>
-        <div class="music-bars">
-            <span></span><span></span><span></span>
+    <div id="speed-control">
+        <button id="speed-down" aria-label="Disminuir velocidad">&#8722;</button>
+        <span id="speed-value">1.0x</span>
+        <button id="speed-up" aria-label="Aumentar velocidad">&#43;</button>
+    </div>
+
+    <div id="word-input">
+        <input type="text" id="word-text" placeholder="escribe algo..." maxlength="20">
+        <button id="word-send" aria-label="Enviar">&#10148;</button>
+    </div>
+
+    <div id="glow-control">
+        <button id="glow-down" aria-label="Disminuir brillo">&#8722;</button>
+        <span id="glow-value">Brillo</span>
+        <button id="glow-up" aria-label="Aumentar brillo">&#43;</button>
+    </div>
+
+    <div id="music-toggle">
+        <button id="player-toggle" aria-label="Abrir musica">&#9835;</button>
+    </div>
+
+    <div id="player-panel">
+        <div class="player-header">
+            <span class="player-header-title">&#9835; Musica</span>
+            <button id="player-close" aria-label="Cerrar">&#10005;</button>
         </div>
-        <span class="music-info" id="music-name"></span>
+
+        <div class="player-now">
+            <div class="player-title" id="player-title"></div>
+            <div class="player-time" id="player-time">0:00 / 0:00</div>
+        </div>
+
+        <div class="player-controls-row">
+            <button id="player-shuffle" aria-label="Aleatorio" class="player-ctrl-btn">&#8645;</button>
+            <button id="player-prev" aria-label="Anterior" class="player-ctrl-btn">&#9664;&#9664;</button>
+            <button id="player-play" aria-label="Play/Pause" class="player-play-btn">&#9654;</button>
+            <button id="player-next" aria-label="Siguiente" class="player-ctrl-btn">&#9654;&#9654;</button>
+            <button id="player-repeat" aria-label="Repetir" class="player-ctrl-btn">&#8634;</button>
+        </div>
+
+        <div id="player-progress-wrap" class="player-progress-wrap">
+            <div id="player-progress-fill" class="player-progress-fill"></div>
+        </div>
+
+        <div class="player-volume-row">
+            <span class="player-vol-icon">&#9834;</span>
+            <input type="range" id="player-volume" min="0" max="1" step="0.05" value="0.25" class="player-volume">
+        </div>
+
+        <div class="player-playlist-label">Playlist</div>
+        <div id="player-playlist" class="player-playlist"></div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="js/config.js"></script>
+    <script src="js/media-config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/particles.js"></script>
-    <script src="js/saturn.js"></script>
+    <script src="js/blackhole.js"></script>
     <script src="js/universe.js"></script>
     <script src="js/interactions.js"></script>
     <script src="js/audio.js"></script>
+    <script src="js/floating-words.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>

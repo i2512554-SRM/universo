@@ -13,6 +13,7 @@ class Universe {
         this.parallaxX = 0;
         this.parallaxY = 0;
         this.discoveredStars = 0;
+        this.frozen = false;
         this.resize();
     }
 
@@ -124,6 +125,13 @@ class Universe {
 
     drawStars(time) {
         for (const s of this.stars) {
+            if (s.exploded) {
+                s.x += s.vx;
+                s.y += s.vy;
+                s.vx *= 0.98;
+                s.vy *= 0.98;
+                s.baseAlpha *= 0.995;
+            }
             const px = s.x + this.parallaxX * s.depth * 15;
             const py = s.y + this.parallaxY * s.depth * 15;
             const twinkle = Math.sin(time * s.twinkleSpeed + s.twinkleOffset);
@@ -139,11 +147,18 @@ class Universe {
 
     drawSpecialStars(time) {
         for (const s of this.specialStars) {
+            if (s.exploded) {
+                s.x += s.vx;
+                s.y += s.vy;
+                s.vx *= 0.97;
+                s.vy *= 0.97;
+                s.baseAlpha *= 0.99;
+            }
             s.pulseAngle += 0.025;
             const pulse = 1 + Math.sin(s.pulseAngle) * 0.2;
             const a = s.discovered
                 ? s.baseAlpha * 0.3
-                : s.alpha * (0.7 + pulse * 0.3);
+                : s.baseAlpha * (0.7 + pulse * 0.3);
 
             if (a < 0.02) continue;
 
@@ -175,6 +190,7 @@ class Universe {
 
     render(time) {
         this.ctx.clearRect(0, 0, this.w, this.h);
+        if (this.frozen) return;
         this.drawBackground();
         this.drawStars(time);
         this.drawSpecialStars(time);
@@ -186,5 +202,20 @@ class Universe {
             if (Utils.dist(x, y, s.x, s.y) < s.clickRadius) return s;
         }
         return null;
+    }
+
+    explode() {
+        for (const s of this.stars) {
+            const angle = Math.atan2(s.y - this.cy, s.x - this.cx);
+            s.exploded = true;
+            s.vx = Math.cos(angle) * Utils.rand(2, 8);
+            s.vy = Math.sin(angle) * Utils.rand(2, 8);
+        }
+        for (const s of this.specialStars) {
+            const angle = Math.atan2(s.y - this.cy, s.x - this.cx);
+            s.exploded = true;
+            s.vx = Math.cos(angle) * Utils.rand(3, 10);
+            s.vy = Math.sin(angle) * Utils.rand(3, 10);
+        }
     }
 }

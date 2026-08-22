@@ -30,7 +30,7 @@ body {
     z-index: 1;
 }
 
-#saturn-canvas {
+#hole-canvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -40,6 +40,17 @@ body {
     cursor: grab;
 }
 
-#saturn-canvas:active {
+#hole-canvas:active {
     cursor: grabbing;
+}
+
+#floating-words {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    overflow: hidden;
 }
